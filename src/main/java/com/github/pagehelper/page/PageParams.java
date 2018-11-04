@@ -63,7 +63,7 @@ public class PageParams {
     public Page getPage(Object parameterObject, RowBounds rowBounds) {
         Page page = PageHelper.getLocalPage();
         if (page == null) {
-            if (rowBounds != RowBounds.DEFAULT) {
+            if (rowBounds != RowBounds.DEFAULT) {//检测RowBounds接口参数
                 if (offsetAsPageNum) {
                     page = new Page(rowBounds.getOffset(), rowBounds.getLimit(), rowBoundsWithCount);
                 } else {
@@ -75,7 +75,7 @@ public class PageParams {
                     PageRowBounds pageRowBounds = (PageRowBounds)rowBounds;
                     page.setCount(pageRowBounds.getCount() == null || pageRowBounds.getCount());
                 }
-            } else if(parameterObject instanceof IPage || supportMethodsArguments){
+            } else if(parameterObject instanceof IPage || supportMethodsArguments){ //检测IPage方法参数
                 try {
                     page = PageObjectUtil.getPageFromObject(parameterObject, false);
                 } catch (Exception e) {
