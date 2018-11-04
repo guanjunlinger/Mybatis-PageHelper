@@ -107,6 +107,7 @@ public class PageInterceptor implements Interceptor {
                 //rowBounds用参数值，不使用分页插件处理时，仍然支持默认的内存分页
                 resultList = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
             }
+            //将结果填充到Page对象中
             return dialect.afterPage(resultList, parameter, rowBounds);
         } finally {
             dialect.afterAll();
