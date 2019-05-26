@@ -79,6 +79,7 @@ public class PageHelper extends PageMethod implements Dialect {
         return autoDialect.getDelegate().afterCount(count, parameterObject, rowBounds);
     }
 
+    // 填充分页参数
     @Override
     public Object processParameterObject(MappedStatement ms, Object parameterObject, BoundSql boundSql, CacheKey pageKey) {
         return autoDialect.getDelegate().processParameterObject(ms, parameterObject, boundSql, pageKey);

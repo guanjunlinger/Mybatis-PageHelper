@@ -24,9 +24,7 @@
 
 package com.github.pagehelper;
 
-/**
- * @author liuzh
- */
+
 public interface IPage {
 
     Integer getPageNum();
