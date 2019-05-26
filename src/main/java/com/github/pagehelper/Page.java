@@ -28,62 +28,32 @@ import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Mybatis - 分页对象
- *
- * @author liuzh/abel533/isea533
- * @version 3.6.0
- *          项目地址 : http://git.oschina.net/free/Mybatis_PageHelper
- */
 public class Page<E> extends ArrayList<E> implements Closeable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 页码，从1开始
-     */
     private int pageNum;
-    /**
-     * 页面大小
-     */
+
     private int pageSize;
-    /**
-     * 起始行
-     */
     private int startRow;
-    /**
-     * 末行
-     */
+
     private int endRow;
-    /**
-     * 总数
-     */
+
     private long total;
-    /**
-     * 总页数
-     */
+
     private int pages;
-    /**
-     * 包含count查询
-     */
+
     private boolean count = true;
-    /**
-     * 分页合理化
-     */
+
     private Boolean reasonable;
-    /**
-     * 当设置为true的时候，如果pagesize设置为0（或RowBounds的limit=0），就不执行分页，返回全部结果
-     */
+
     private Boolean pageSizeZero;
-    /**
-     * 进行count查询的列名
-     */
+
     private String countColumn;
-    /**
-     * 排序
-     */
+
     private String orderBy;
-    /**
-     * 只增加排序
+
+    /*
+    仅仅对查询结果排序,不分页
      */
     private boolean orderByOnly;
 
@@ -112,11 +82,7 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         setReasonable(reasonable);
     }
 
-    /**
-     * int[] rowBounds
-     * 0 : offset
-     * 1 : limit
-     */
+
     public Page(int[] rowBounds, boolean count) {
         super(0);
         if (rowBounds[0] == 0 && rowBounds[1] == Integer.MAX_VALUE) {
@@ -158,7 +124,6 @@ public class Page<E> extends ArrayList<E> implements Closeable {
     }
 
     public Page<E> setPageNum(int pageNum) {
-        //分页合理化，针对不合理的页码自动处理
         this.pageNum = ((reasonable != null && reasonable) && pageNum <= 0) ? 1 : pageNum;
         return this;
     }
@@ -196,7 +161,6 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         } else {
             pages = 0;
         }
-        //分页合理化，针对不合理的页码自动处理
         if ((reasonable != null && reasonable) && pageNum > pages) {
             if(pages!=0){
                 pageNum = pages;
@@ -214,7 +178,6 @@ public class Page<E> extends ArrayList<E> implements Closeable {
             return this;
         }
         this.reasonable = reasonable;
-        //分页合理化，针对不合理的页码自动处理
         if (this.reasonable && this.pageNum <= 0) {
             this.pageNum = 1;
             calculateStartAndEndRow();
@@ -249,9 +212,6 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         this.orderByOnly = orderByOnly;
     }
 
-    /**
-     * 计算起止行号
-     */
     private void calculateStartAndEndRow() {
         this.startRow = this.pageNum > 0 ? (this.pageNum - 1) * this.pageSize : 0;
         this.endRow = this.startRow + this.pageSize * (this.pageNum > 0 ? 1 : 0);
@@ -266,69 +226,32 @@ public class Page<E> extends ArrayList<E> implements Closeable {
         return this;
     }
 
-    /**
-     * 设置页码
-     *
-     * @param pageNum
-     * @return
-     */
     public Page<E> pageNum(int pageNum) {
-        //分页合理化，针对不合理的页码自动处理
         this.pageNum = ((reasonable != null && reasonable) && pageNum <= 0) ? 1 : pageNum;
         return this;
     }
 
-    /**
-     * 设置页面大小
-     *
-     * @param pageSize
-     * @return
-     */
     public Page<E> pageSize(int pageSize) {
         this.pageSize = pageSize;
         calculateStartAndEndRow();
         return this;
     }
 
-    /**
-     * 是否执行count查询
-     *
-     * @param count
-     * @return
-     */
     public Page<E> count(Boolean count) {
         this.count = count;
         return this;
     }
 
-    /**
-     * 设置合理化
-     *
-     * @param reasonable
-     * @return
-     */
     public Page<E> reasonable(Boolean reasonable) {
         setReasonable(reasonable);
         return this;
     }
 
-    /**
-     * 当设置为true的时候，如果pagesize设置为0（或RowBounds的limit=0），就不执行分页，返回全部结果
-     *
-     * @param pageSizeZero
-     * @return
-     */
     public Page<E> pageSizeZero(Boolean pageSizeZero) {
         setPageSizeZero(pageSizeZero);
         return this;
     }
 
-    /**
-     * 指定 count 查询列
-     *
-     * @param columnName
-     * @return
-     */
     public Page<E> countColumn(String columnName) {
         this.countColumn = columnName;
         return this;

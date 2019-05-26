@@ -39,9 +39,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author liuzenghui
- */
+
 public abstract class ExecutorUtil {
 
     private static Field additionalParametersField;
@@ -134,49 +132,31 @@ public abstract class ExecutorUtil {
         for (String key : additionalParameters.keySet()) {
             countBoundSql.setAdditionalParameter(key, additionalParameters.get(key));
         }
-        //执行 count 查询
+
         Object countResultList = executor.query(countMs, parameter, RowBounds.DEFAULT, resultHandler, countKey, countBoundSql);
         Long count = (Long) ((List) countResultList).get(0);
         return count;
     }
 
-    /**
-     * 分页查询
-     *
-     * @param dialect
-     * @param executor
-     * @param ms
-     * @param parameter
-     * @param rowBounds
-     * @param resultHandler
-     * @param boundSql
-     * @param cacheKey
-     * @param <E>
-     * @return
-     * @throws SQLException
-     */
-    public static  <E> List<E> pageQuery(Dialect dialect, Executor executor, MappedStatement ms, Object parameter,
-                                 RowBounds rowBounds, ResultHandler resultHandler,
-                                 BoundSql boundSql, CacheKey cacheKey) throws SQLException {
-        //判断是否需要进行分页查询
+    public static <E> List<E> pageQuery(Dialect dialect, Executor executor, MappedStatement ms, Object parameter,
+                                        RowBounds rowBounds, ResultHandler resultHandler,
+                                        BoundSql boundSql, CacheKey cacheKey) throws SQLException {
         if (dialect.beforePage(ms, parameter, rowBounds)) {
-            //生成分页的缓存 key
+
             CacheKey pageKey = cacheKey;
-            //处理参数对象
             parameter = dialect.processParameterObject(ms, parameter, boundSql, pageKey);
-            //调用方言获取分页 sql
+
             String pageSql = dialect.getPageSql(ms, boundSql, parameter, rowBounds, pageKey);
             BoundSql pageBoundSql = new BoundSql(ms.getConfiguration(), pageSql, boundSql.getParameterMappings(), parameter);
 
             Map<String, Object> additionalParameters = getAdditionalParameter(boundSql);
-            //设置动态参数
+
             for (String key : additionalParameters.keySet()) {
                 pageBoundSql.setAdditionalParameter(key, additionalParameters.get(key));
             }
-            //执行分页查询
+
             return executor.query(ms, parameter, RowBounds.DEFAULT, resultHandler, pageKey, pageBoundSql);
         } else {
-            //不执行分页的情况下，也不执行内存分页
             return executor.query(ms, parameter, RowBounds.DEFAULT, resultHandler, cacheKey, boundSql);
         }
     }

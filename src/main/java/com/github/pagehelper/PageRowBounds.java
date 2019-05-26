@@ -26,9 +26,6 @@ package com.github.pagehelper;
 
 import org.apache.ibatis.session.RowBounds;
 
-/**
- * @author liuzenghui
- */
 public class PageRowBounds extends RowBounds {
     private Long total;
     private Boolean count;

@@ -37,19 +37,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author liuzh
- */
+
 public class MySqlDialect extends AbstractHelperDialect {
 
     @Override
     public Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey) {
         paramMap.put(PAGEPARAMETER_FIRST, page.getStartRow());
         paramMap.put(PAGEPARAMETER_SECOND, page.getPageSize());
-        //处理pageKey
+
         pageKey.update(page.getStartRow());
         pageKey.update(page.getPageSize());
-        //处理参数配置
+
         if (boundSql.getParameterMappings() != null) {
             List<ParameterMapping> newParameterMappings = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
             if (page.getStartRow() == 0) {

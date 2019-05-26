@@ -27,14 +27,12 @@ package com.github.pagehelper;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @author liuzh
- */
+
 public class PageSerializable<T> implements Serializable {
     private static final long serialVersionUID = 1L;
-    //总记录数
+
     protected long    total;
-    //结果集
+
     protected List<T> list;
 
     public PageSerializable() {

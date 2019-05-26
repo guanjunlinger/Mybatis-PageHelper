@@ -39,17 +39,12 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Mybatis - 通用分页拦截器<br/>
- * 项目地址 : http://git.oschina.net/free/Mybatis_PageHelper
- *
- * @author liuzh/abel533/isea533
- * @version 5.0.0
- */
+//组合模式,管理各种数据库方言
 public class PageHelper extends PageMethod implements Dialect {
     private PageParams pageParams;
     private PageAutoDialect autoDialect;
 
+    //是否需要分页
     @Override
     public boolean skip(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         if (ms.getId().endsWith(MSUtils.COUNT)) {
@@ -59,7 +54,6 @@ public class PageHelper extends PageMethod implements Dialect {
         if (page == null) {
             return true;
         } else {
-            //设置默认的 count 列
             if (StringUtil.isEmpty(page.getCountColumn())) {
                 page.setCountColumn(pageParams.getCountColumn());
             }
@@ -68,6 +62,7 @@ public class PageHelper extends PageMethod implements Dialect {
         }
     }
 
+    //是否需要执行Count查询
     @Override
     public boolean beforeCount(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().beforeCount(ms, parameterObject, rowBounds);
@@ -78,6 +73,7 @@ public class PageHelper extends PageMethod implements Dialect {
         return autoDialect.getDelegate().getCountSql(ms, boundSql, parameterObject, rowBounds, countKey);
     }
 
+    //是否需要返回空列表
     @Override
     public boolean afterCount(long count, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().afterCount(count, parameterObject, rowBounds);
@@ -88,6 +84,7 @@ public class PageHelper extends PageMethod implements Dialect {
         return autoDialect.getDelegate().processParameterObject(ms, parameterObject, boundSql, pageKey);
     }
 
+    //是否需要执行分页查询
     @Override
     public boolean beforePage(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().beforePage(ms, parameterObject, rowBounds);
@@ -104,7 +101,6 @@ public class PageHelper extends PageMethod implements Dialect {
 
     @Override
     public Object afterPage(List pageList, Object parameterObject, RowBounds rowBounds) {
-        //这个方法即使不分页也会被执行，所以要判断 null
         AbstractHelperDialect delegate = autoDialect.getDelegate();
         if (delegate != null) {
             return delegate.afterPage(pageList, parameterObject, rowBounds);
@@ -114,7 +110,6 @@ public class PageHelper extends PageMethod implements Dialect {
 
     @Override
     public void afterAll() {
-        //这个方法即使不分页也会被执行，所以要判断 null
         AbstractHelperDialect delegate = autoDialect.getDelegate();
         if (delegate != null) {
             delegate.afterAll();
@@ -130,7 +125,6 @@ public class PageHelper extends PageMethod implements Dialect {
         autoDialect = new PageAutoDialect();
         pageParams.setProperties(properties);
         autoDialect.setProperties(properties);
-        //20180902新增 aggregateFunctions, 允许手动添加聚合函数（影响行数）
         CountSqlParser.addAggregateFunctions(properties.getProperty("aggregateFunctions"));
     }
 }

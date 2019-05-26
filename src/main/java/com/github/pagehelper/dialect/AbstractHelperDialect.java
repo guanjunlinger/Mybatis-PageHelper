@@ -40,27 +40,16 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.util.*;
 
-/**
- * 针对 PageHelper 的实现
- *
- * @author liuzh
- * @since 2016-12-04 14:32
- */
+
 public abstract class AbstractHelperDialect extends AbstractDialect implements Constant {
 
-    /**
-     * 获取分页参数
-     *
-     * @param <T>
-     * @return
-     */
+
     public <T> Page<T> getLocalPage() {
         return PageHelper.getLocalPage();
     }
 
     @Override
     public final boolean skip(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
-        //该方法不会被调用
         return true;
     }
 
@@ -87,8 +76,6 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
         if (rowBounds instanceof PageRowBounds) {
             ((PageRowBounds) rowBounds).setTotal(count);
         }
-        //pageSize < 0 的时候，不执行分页查询
-        //pageSize = 0 的时候，还需要执行后续查询，但是不会分页
         if (page.getPageSize() < 0) {
             return false;
         }
@@ -97,9 +84,7 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
 
     @Override
     public Object processParameterObject(MappedStatement ms, Object parameterObject, BoundSql boundSql, CacheKey pageKey) {
-        //处理参数
         Page page = getLocalPage();
-        //如果只是 order by 就不必处理参数
         if (page.isOrderByOnly()) {
             return parameterObject;
         }
@@ -141,16 +126,7 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
         return processPageParameter(ms, paramMap, page, boundSql, pageKey);
     }
 
-    /**
-     * 处理分页参数
-     *
-     * @param ms
-     * @param paramMap
-     * @param page
-     * @param boundSql
-     * @param pageKey
-     * @return
-     */
+
     public abstract Object processPageParameter(MappedStatement ms, Map<String, Object> paramMap, Page page, BoundSql boundSql, CacheKey pageKey);
 
     @Override
@@ -166,7 +142,6 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
     public String getPageSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, RowBounds rowBounds, CacheKey pageKey) {
         String sql = boundSql.getSql();
         Page page = getLocalPage();
-        //支持 order by
         String orderBy = page.getOrderBy();
         if (StringUtil.isNotEmpty(orderBy)) {
             pageKey.update(orderBy);
@@ -178,14 +153,7 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
         return getPageSql(sql, page, pageKey);
     }
 
-    /**
-     * 单独处理分页部分
-     *
-     * @param sql
-     * @param page
-     * @param pageKey
-     * @return
-     */
+
     public abstract String getPageSql(String sql, Page page, CacheKey pageKey);
 
     @Override
@@ -199,7 +167,7 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
             page.setTotal(-1);
         } else if ((page.getPageSizeZero() != null && page.getPageSizeZero()) && page.getPageSize() == 0) {
             page.setTotal(pageList.size());
-        } else if(page.isOrderByOnly()){
+        } else if (page.isOrderByOnly()) {
             page.setTotal(pageList.size());
         }
         return page;
@@ -215,7 +183,7 @@ public abstract class AbstractHelperDialect extends AbstractDialect implements C
 
     }
 
-    protected void handleParameter(BoundSql boundSql, MappedStatement ms){
+    protected void handleParameter(BoundSql boundSql, MappedStatement ms) {
         if (boundSql.getParameterMappings() != null) {
             List<ParameterMapping> newParameterMappings = new ArrayList<ParameterMapping>(boundSql.getParameterMappings());
             newParameterMappings.add(new ParameterMapping.Builder(ms.getConfiguration(), PAGEPARAMETER_FIRST, Integer.class).build());

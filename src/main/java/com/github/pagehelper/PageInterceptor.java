@@ -42,17 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * Mybatis - 通用分页拦截器
- * <p>
- * GitHub: https://github.com/pagehelper/Mybatis-PageHelper
- * <p>
- * Gitee : https://gitee.com/free/Mybatis_PageHelper
- *
- * @author liuzh/abel533/isea533
- * @version 5.0.0
- */
-@SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts(
         {
                 @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
@@ -76,38 +65,30 @@ public class PageInterceptor implements Interceptor {
             Executor executor = (Executor) invocation.getTarget();
             CacheKey cacheKey;
             BoundSql boundSql;
-            //由于逻辑关系，只会进入一次
             if (args.length == 4) {
-                //4 个参数时
                 boundSql = ms.getBoundSql(parameter);
                 cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
             } else {
-                //6 个参数时
                 cacheKey = (CacheKey) args[4];
                 boundSql = (BoundSql) args[5];
             }
             checkDialectExists();
 
             List resultList;
-            //调用方法判断是否需要进行分页，如果不需要，直接返回结果
             if (!dialect.skip(ms, parameter, rowBounds)) {
-                //判断是否需要进行 count 查询
                 if (dialect.beforeCount(ms, parameter, rowBounds)) {
-                    //查询总数
                     Long count = count(executor, ms, parameter, rowBounds, resultHandler, boundSql);
-                    //处理查询总数，返回 true 时继续分页查询，false 时直接返回
                     if (!dialect.afterCount(count, parameter, rowBounds)) {
-                        //当查询总数为 0 时，直接返回空的结果
+
                         return dialect.afterPage(new ArrayList(), parameter, rowBounds);
                     }
                 }
                 resultList = ExecutorUtil.pageQuery(dialect, executor,
                         ms, parameter, rowBounds, resultHandler, boundSql, cacheKey);
             } else {
-                //rowBounds用参数值，不使用分页插件处理时，仍然支持默认的内存分页
                 resultList = executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
             }
-            //将结果填充到Page对象中
+
             return dialect.afterPage(resultList, parameter, rowBounds);
         } finally {
             dialect.afterAll();
@@ -134,7 +115,6 @@ public class PageInterceptor implements Interceptor {
                        BoundSql boundSql) throws SQLException {
         String countMsId = ms.getId() + countSuffix;
         Long count;
-        //先判断是否存在手写的 count 查询
         MappedStatement countMs = ExecutorUtil.getExistedMappedStatement(ms.getConfiguration(), countMsId);
         if (countMs != null) {
             count = ExecutorUtil.executeManualCount(executor, countMs, parameter, boundSql, resultHandler);
@@ -158,7 +138,6 @@ public class PageInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties properties) {
-        //缓存 count ms
         msCountMap = CacheFactory.createCache(properties.getProperty("msCountCache"), "ms", properties);
         String dialectClass = properties.getProperty("dialect");
         if (StringUtil.isEmpty(dialectClass)) {
