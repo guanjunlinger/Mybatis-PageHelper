@@ -39,7 +39,6 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.List;
 import java.util.Properties;
 
-//组合模式,管理各种数据库方言
 public class PageHelper extends PageMethod implements Dialect {
     private PageParams pageParams;
     private PageAutoDialect autoDialect;
