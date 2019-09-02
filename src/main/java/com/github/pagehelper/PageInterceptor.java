@@ -50,8 +50,11 @@ import java.util.Properties;
 )
 public class PageInterceptor implements Interceptor {
     private volatile Dialect dialect;
+    //默认的Count查询语句后缀
     private String countSuffix = "_COUNT";
     protected Cache<String, MappedStatement> msCountMap = null;
+
+    //默认的分页方言类
     private String default_dialect_class = "com.github.pagehelper.PageHelper";
 
     @Override
@@ -122,7 +125,6 @@ public class PageInterceptor implements Interceptor {
             countMs = msCountMap.get(countMsId);
             //自动创建
             if (countMs == null) {
-                //根据当前的 ms 创建一个返回值为 Long 类型的 ms
                 countMs = MSUtils.newCountMappedStatement(ms, countMsId);
                 msCountMap.put(countMsId, countMs);
             }

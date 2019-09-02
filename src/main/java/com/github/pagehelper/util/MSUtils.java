@@ -32,21 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 创建新的MappedStatement,主要是Count返回值int
- *
  * @author liuzh
  */
 public class MSUtils {
     public static final String COUNT = "_COUNT";
     private static final List<ResultMapping> EMPTY_RESULTMAPPING = new ArrayList<ResultMapping>(0);
 
-    /**
-     * 新建count查询的MappedStatement
-     *
-     * @param ms
-     * @param newMsId
-     * @return
-     */
     public static MappedStatement newCountMappedStatement(MappedStatement ms, String newMsId) {
         MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), newMsId, ms.getSqlSource(), ms.getSqlCommandType());
         builder.resource(ms.getResource());
@@ -63,7 +54,6 @@ public class MSUtils {
         }
         builder.timeout(ms.getTimeout());
         builder.parameterMap(ms.getParameterMap());
-        //count查询返回值int
         List<ResultMap> resultMaps = new ArrayList<ResultMap>();
         ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), ms.getId(), Long.class, EMPTY_RESULTMAPPING).build();
         resultMaps.add(resultMap);
@@ -76,12 +66,6 @@ public class MSUtils {
         return builder.build();
     }
 
-    /**
-     * 新建count查询的MappedStatement
-     *
-     * @param ms
-     * @return
-     */
     public static MappedStatement newCountMappedStatement(MappedStatement ms) {
         return newCountMappedStatement(ms, ms.getId() + COUNT);
     }

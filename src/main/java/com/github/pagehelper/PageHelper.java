@@ -43,7 +43,6 @@ public class PageHelper extends PageMethod implements Dialect {
     private PageParams pageParams;
     private PageAutoDialect autoDialect;
 
-    //是否需要分页
     @Override
     public boolean skip(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         if (ms.getId().endsWith(MSUtils.COUNT)) {
@@ -61,7 +60,6 @@ public class PageHelper extends PageMethod implements Dialect {
         }
     }
 
-    //是否需要执行Count查询
     @Override
     public boolean beforeCount(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().beforeCount(ms, parameterObject, rowBounds);
@@ -72,13 +70,11 @@ public class PageHelper extends PageMethod implements Dialect {
         return autoDialect.getDelegate().getCountSql(ms, boundSql, parameterObject, rowBounds, countKey);
     }
 
-    //是否需要返回空列表
     @Override
     public boolean afterCount(long count, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().afterCount(count, parameterObject, rowBounds);
     }
 
-    // 填充分页参数
     @Override
     public Object processParameterObject(MappedStatement ms, Object parameterObject, BoundSql boundSql, CacheKey pageKey) {
         return autoDialect.getDelegate().processParameterObject(ms, parameterObject, boundSql, pageKey);

@@ -37,12 +37,6 @@ import java.util.Properties;
  */
 public abstract class CacheFactory {
 
-    /**
-     * 创建 SQL 缓存
-     *
-     * @param sqlCacheClass
-     * @return
-     */
     public static <K, V> Cache<K, V> createCache(String sqlCacheClass, String prefix, Properties properties) {
         if (StringUtil.isEmpty(sqlCacheClass)) {
             try {
