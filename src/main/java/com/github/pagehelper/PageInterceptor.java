@@ -123,7 +123,6 @@ public class PageInterceptor implements Interceptor {
             count = ExecutorUtil.executeManualCount(executor, countMs, parameter, boundSql, resultHandler);
         } else {
             countMs = msCountMap.get(countMsId);
-            //自动创建
             if (countMs == null) {
                 countMs = MSUtils.newCountMappedStatement(ms, countMsId);
                 msCountMap.put(countMsId, countMs);

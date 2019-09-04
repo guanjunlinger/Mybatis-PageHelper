@@ -126,7 +126,6 @@ public abstract class ExecutorUtil {
         CacheKey countKey = executor.createCacheKey(countMs, parameter, RowBounds.DEFAULT, boundSql);
         //调用方言获取 count sql
         String countSql = dialect.getCountSql(countMs, boundSql, parameter, rowBounds, countKey);
-        //countKey.update(countSql);
         BoundSql countBoundSql = new BoundSql(countMs.getConfiguration(), countSql, boundSql.getParameterMappings(), parameter);
         //当使用动态 SQL 时，可能会产生临时的参数，这些参数需要手动设置到新的 BoundSql 中
         for (String key : additionalParameters.keySet()) {

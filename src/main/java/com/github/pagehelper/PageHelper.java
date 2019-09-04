@@ -80,7 +80,6 @@ public class PageHelper extends PageMethod implements Dialect {
         return autoDialect.getDelegate().processParameterObject(ms, parameterObject, boundSql, pageKey);
     }
 
-    //是否需要执行分页查询
     @Override
     public boolean beforePage(MappedStatement ms, Object parameterObject, RowBounds rowBounds) {
         return autoDialect.getDelegate().beforePage(ms, parameterObject, rowBounds);
