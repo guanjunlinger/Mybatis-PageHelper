@@ -99,9 +99,8 @@ public class PageInterceptor implements Interceptor {
     }
 
     /**
-     * Spring bean 方式配置时，如果没有配置属性就不会执行下面的 setProperties 方法，就不会初始化
-     * <p>
-     * 因此这里会出现 null 的情况 fixed #26
+     * Spring bean 方式配置时可能会忽略属性方法调用
+     fixed #26
      */
     private void checkDialectExists() {
         if (dialect == null) {
