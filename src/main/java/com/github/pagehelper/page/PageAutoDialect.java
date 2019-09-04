@@ -84,6 +84,7 @@ public class PageAutoDialect {
     public void initDelegateDialect(MappedStatement ms) {
         if (delegate == null) {
             if (autoDialect) {
+                //类双检索机制 防止重复解析Dialect
                 this.delegate = getDialect(ms);
             } else {
                 dialectThreadLocal.set(getDialect(ms));
