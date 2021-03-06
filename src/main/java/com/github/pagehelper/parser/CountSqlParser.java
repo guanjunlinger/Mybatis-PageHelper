@@ -177,6 +177,12 @@ public class CountSqlParser {
             return getSimpleCountSql(sql);
         }
         try {
+            /**
+             * sql解析工具:
+             *     jsqlparser
+             *     druid sql parser
+             *     apache calcite
+              */
             stmt = CCJSqlParserUtil.parse(sql);
         } catch (Throwable e) {
             //无法解析的用一般方法返回count语句
